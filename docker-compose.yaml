@@ -1,0 +1,27 @@
+version: '3.10'
+
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:mysecretpassword@db/postgres
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: my_db_name
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: my_pg_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
