@@ -3,14 +3,14 @@ import logging
 
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
-# from apscheduler.schedulers.asyncio import AsyncIOScheduler
-# from apscheduler.triggers.interval import IntervalTrigger
-# from telethon import TelegramClient
 from redis.asyncio import ConnectionPool, Redis
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+
 
 from bot.config import Config, load_config
 from bot.handlers import router
-from bot.middlewares.middleware import CheckUserMiddleware, DbSessionMiddleware
+from bot.middlewares.middleware import CheckUserMiddleware, DBSessionMiddleware
+from bot.scheduler import check_reminders
 from db.create_pool import create_pool
 
 CHECK_INTERVAL = 60
@@ -27,23 +27,18 @@ async def main():
             db=config.redis_db.redis_db,
         )
     )
-
     dp: Dispatcher = Dispatcher(
         name="main_dispatcher",
         storage=RedisStorage(redis=redis),
         config=config,
     )
-    # scheduler = AsyncIOScheduler()
     session_pool = await create_pool()
-    dp.message.middleware(DbSessionMiddleware(session_pool))
-    dp.message.middleware(CheckUserMiddleware())
+    dp.update.outer_middleware(DBSessionMiddleware(session_pool))
+    dp.update.outer_middleware(CheckUserMiddleware())
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(check_reminders, 'interval', seconds=CHECK_INTERVAL, args=[bot, session_pool])
+    scheduler.start()
     dp.include_router(router)
-    # scheduler.add_job(
-    #     check_reminders,
-    #     IntervalTrigger(seconds=CHECK_INTERVAL),
-    #     args=[session_pool, client],
-    # )
-    # scheduler.start()
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 

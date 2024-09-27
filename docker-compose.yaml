@@ -1,27 +1,61 @@
-version: '3.10'
+version: '3.12'
 
 services:
-  app:
-    build: .
-    volumes:
-      - .:/app
-    ports:
-      - "8000:8000"
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:mysecretpassword@db/postgres
+  bot:
+    container_name: reminder_bot
+    build:
+      context: .  # Используем текущую директорию для сборки Dockerfile бота
+      dockerfile: Dockerfile  # Dockerfile для бота
+    command: python /app/bot/__main__.py  # Команда для запуска бота
+    env_file:
+      - .env  # Подключаем файл с переменными окружения
     depends_on:
-      - db
+      - postgres
+      - redis
+    volumes:
+      - .:/app  # Привязываем код бота к контейнеру
+    networks:
+      - botnet
 
-  db:
+  postgres:
     image: postgres:13
-    environment:
-      POSTGRES_DB: my_db_name
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: my_pg_password
+    container_name: reminder_postgress
+    env_file:
+      - .env  # Подключаем файл с переменными окружения
     ports:
-      - "5432:5432"
+      - "5434:5432"  # Пробрасываем порт для внешнего доступа
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - botnet
+
+  redis:
+    image: redis:alpine
+    container_name: reminder_rediss
+    env_file:
+      - .env  # Подключаем файл с переменными окружения
+    ports:
+      - "6381:6379"  # Пробрасываем порт 6380 как внешний порт
+    volumes:
+      - redis_data:/data
+    networks:
+      - botnet
+
+  adminer:
+    build:
+      context: .  # Используем текущую директорию для сборки Dockerfile SQLAdmin
+      dockerfile: Dockerfile.admin  # Указываем отдельный Dockerfile для SQLAdmin
+    container_name: reminder_adminer
+    env_file:
+      - .env  # Подключаем файл с переменными окружения
+    ports:
+      - "8080:8000"  # Пробрасываем порт для доступа к Adminer
+    networks:
+      - botnet
 
 volumes:
   postgres_data:
+  redis_data:
+
+networks:
+  botnet:

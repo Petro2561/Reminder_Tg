@@ -2,7 +2,6 @@ from dataclasses import dataclass
 
 from environs import Env
 
-
 @dataclass
 class TgBot:
     token: str
@@ -29,12 +28,24 @@ class Redis:
     redis_db: int
     redis_data: str
 
+@dataclass
+class AdminConfig:
+    admin_login: str
+    admin_password: str
+    secret_key: str
+
+@dataclass
+class OpenAI:
+    api_token: str
 
 @dataclass
 class Config:
     tg_bot: TgBot
     postgres_db: Postgres
     redis_db: Redis
+    admin_config: AdminConfig
+    open_ai: OpenAI
+
 
 
 def load_config(path: str | None = None) -> Config:
@@ -54,5 +65,11 @@ def load_config(path: str | None = None) -> Config:
             redis_port=env("REDIS_PORT"),
             redis_db=env("REDIS_DB"),
             redis_data=env("REDIS_DATA")
-        )
+        ),
+        admin_config=AdminConfig(
+        admin_login=env("ADMIN_LOGIN"),
+        admin_password=env("ADMIN_PASSWORD"),
+        secret_key=env("SECRET_KEY"),
+        ),
+        open_ai=OpenAI(api_token=env("OPENAI_API"))
     )
