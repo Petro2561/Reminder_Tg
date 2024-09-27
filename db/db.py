@@ -83,7 +83,10 @@ class Reminder(Base):
     @classmethod
     def from_gpt(cls, from_gpt: dict, user: DBUser) -> Self:
         date_str = from_gpt.get("дата", None)
-        date = datetime.strptime(date_str, "%Y-%m-%d").date() if date_str else None
+        if date_str == 'сегодня':
+            date = datetime.now().date()  # Сегодняшняя дата
+        else:
+            date = datetime.strptime(date_str, "%Y-%m-%d").date() if date_str else None
         repeat_type_map = {
             "еженедельно": RepeatType.WEEKLY,
             "ежедневно": RepeatType.DAILY,
