@@ -114,7 +114,7 @@ async def manage_audio(file_bytes: BytesIO):
 
 async def generate_cool_phrase(user_input):    
     response = await client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         messages=[
             {"role": "user", "content": user_input}
         ],
