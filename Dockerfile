@@ -9,6 +9,9 @@ RUN apt-get update && apt-get install -y locales && \
     echo "ru_RU.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen
 
+RUN apt-get update && apt-get install -y tzdata
+
+
 # Устанавливаем переменные окружения для локалей
 ENV LANG=ru_RU.UTF-8
 ENV LANGUAGE=ru_RU:ru
