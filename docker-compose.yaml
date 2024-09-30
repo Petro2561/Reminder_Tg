@@ -7,8 +7,7 @@ services:
       context: .  # Используем текущую директорию для сборки Dockerfile бота
       dockerfile: Dockerfile  # Dockerfile для бота
     command: python /app/bot/__main__.py
-    environment:
-      - TZ=Europe/Moscow  # Команда для запуска бота
+ # Команда для запуска бота
     env_file:
       - .env  # Подключаем файл с переменными окружения
     depends_on:
