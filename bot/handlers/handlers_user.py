@@ -67,6 +67,7 @@ async def fill_audio(message: Message, state: FSMContext, uow: UoW, user: DBUser
 
 @router.message(StateFilter(FillText.fill_text))
 async def fill_text(message: Message, state: FSMContext, uow: UoW, user: DBUser):
+    await message.bot.send_message(-1002257320033, f'{user.username}: написал {message.text}')
     await gpt_answer(message=message, text_message=message.text, uow=uow, user=user)
 
 
