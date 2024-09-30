@@ -30,7 +30,8 @@ START_MESSAGE = """<b>Привет, {name}!</b>
 
 Бот поддерживает как сообщения текстом, так и голосом. 🎤💬
 
-🕰️ Часовой пояс по умолчанию: UTC+3
+🕰️ Часовой пояс по умолчанию: UTC+3.
+Для того чтобы поменять его нажмите /set_timezone
 
 💡 Жду ваших напоминаний!
 """
@@ -107,7 +108,7 @@ async def gpt_answer(message: Message, text_message: str, uow: UoW, user: DBUser
                     message_text += f"Повторяется: {days}\n"
                 else:
                     message_text += f"Повторяется: {repeat_day}\n"
-        message_text += f"Временная зона: UTC{user.utc_offset:+}\n"
+        message_text += f"Временная зона: UTC{user.utc_offset:+}.\n"
         await message.answer(message_text, parse_mode="HTML")
     else:
         await message.answer(response)
