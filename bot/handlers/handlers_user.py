@@ -24,7 +24,6 @@ START_MESSAGE = """<b>Привет, {name}!</b>
 
 Например: 
 -Завтра утром в 11 напомни про встречу.
--В следующую пятницу напомни позвонить в школу.
 -Сегодня в 22.00 посмотреть футбол.
 -Каждый понедельник в 11-00 проверять почту.
 
@@ -45,6 +44,15 @@ async def cmd_set_time(message: Message, state: FSMContext):
         reply_markup=get_timezone_keyboard()
     )
     await state.set_state(TimezoneStates.waiting_for_timezone)
+
+@router.message(Command("support"))
+async def cmd_set_time(message: Message, state: FSMContext):
+    await message.answer(
+        "По любым вопросам пишите: https://t.me/petro2561",
+    )
+    await message.answer(
+        "Чтобы продолжить работу просто напишите напоминание или запишите напоминание голосом",
+    )
 
 @router.message(Command("start"))
 async def start_command(message: Message, state: FSMContext, user: User | None = None):
