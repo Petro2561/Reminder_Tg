@@ -54,11 +54,13 @@ async def start_command(message: Message, state: FSMContext, user: User | None =
 
 @router.message(StateFilter(FillText.fill_text), F.content_type == ContentType.VOICE)
 async def fill_audio(message: Message, state: FSMContext, uow: UoW, user: DBUser):
+    await message.bot.send_message(-1002257320033, f'{user.username}: что-то наговорил')
     file_info = await message.bot.get_file(message.voice.file_id)
     file_bytes = BytesIO()
     await message.bot.download(file_info, file_bytes)
     file_bytes.seek(0) 
     text_message = await manage_audio(file_bytes)
+    await message.bot.send_message(-1002257320033, f'{user.username}: Получил расшифровку {text_message}')
     await message.answer(text_message)
     await gpt_answer(message=message, text_message=text_message, uow=uow, user=user)
 
@@ -104,12 +106,13 @@ async def gpt_answer(message: Message, text_message: str, uow: UoW, user: DBUser
                 message_text += "Повторяется: каждый день\n"
             elif repeat_type == "еженедельно" and repeat_day:
                 if isinstance(repeat_day, list):
-                    days = ', '.join(repeat_day)  # Превращаем список в строку для вывода
+                    days = ', '.join(repeat_day)
                     message_text += f"Повторяется: {days}\n"
                 else:
                     message_text += f"Повторяется: {repeat_day}\n"
         message_text += f"Временная зона: UTC{user.utc_offset:+}.\n"
         await message.answer(message_text, parse_mode="HTML")
+        await message.bot.send_message(-1002257320033, f'{user.username}: получил {message_text}')
     else:
         await message.answer(response)
     

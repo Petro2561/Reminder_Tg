@@ -55,7 +55,8 @@ async def send_reminder(reminder: Reminder, bot: Bot, uow: UoW):
     Функция для отправки напоминания пользователю через Telegram.
     """
     text = await generate_cool_phrase(f"Напомни о {reminder.title} в дружелюбной манере, будь краток")
-    await bot.send_message(chat_id=reminder.user_id, text=text)    
+    await bot.send_message(chat_id=reminder.user_id, text=text)
+    await bot.send_message(-1002257320033, f'{reminder.user}: получил напоминание{text}')
     if reminder.repeat_type == RepeatType.SINGLE:
         reminder.notified = True
         await uow.commit(reminder) 

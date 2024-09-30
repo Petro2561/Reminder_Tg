@@ -123,8 +123,3 @@ async def generate_cool_phrase(user_input):
     )
     content = response.choices[0].message.content
     return content
-
-async def main():
-    print(await generate_cool_phrase("привет"))
-
-asyncio.run(main()) 
