@@ -21,7 +21,7 @@ class UserAdmin(ModelView, model=DBUser):
     column_list = [DBUser.first_name, DBUser.second_name, DBUser.username, DBUser.created_at, DBUser.utc_offset]
 
 class Reminders(ModelView, model=Reminder):
-    column_list = [Reminder.title, Reminder.date, Reminder.time, Reminder.user, Reminder.title, Reminder.repeat_day_of_week]
+    column_list = [Reminder.title, Reminder.date, Reminder.time, Reminder.user, Reminder.title, Reminder.repeat_day_of_week, Reminder.notified]
 
 admin.add_view(UserAdmin)
 admin.add_view(Reminders)

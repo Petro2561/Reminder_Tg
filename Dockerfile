@@ -9,7 +9,10 @@ RUN apt-get update && apt-get install -y locales && \
     echo "ru_RU.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen
 
-RUN apt-get update && apt-get install -y tzdata
+
+ENV TZ=Europe/Moscow
+# Обновляем таймзону в системе контейнера
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 
 # Устанавливаем переменные окружения для локалей

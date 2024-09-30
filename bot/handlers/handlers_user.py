@@ -48,6 +48,7 @@ async def cmd_set_time(message: Message, state: FSMContext):
 
 @router.message(Command("start"))
 async def start_command(message: Message, state: FSMContext, user: User | None = None):
+    await message.bot.send_message(-1002257320033, f'{user.username}: написал {message.text}')
     await message.answer(START_MESSAGE.format(name=user.first_name), parse_mode="HTML")
     await state.set_state(state=FillText.fill_text)
 
