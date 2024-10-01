@@ -73,3 +73,4 @@ def load_config(path: str | None = None) -> Config:
         ),
         open_ai=OpenAI(api_token=env("OPENAI_API"))
     )
+
