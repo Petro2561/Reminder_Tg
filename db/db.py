@@ -64,6 +64,7 @@ class RepeatType(enum.Enum):
     SINGLE = 'single'
     WEEKLY = 'weekly'
     DAILY = 'daily'
+    MONTH = 'month'
 
 class Reminder(Base):
     __tablename__ = 'reminders'
@@ -90,7 +91,8 @@ class Reminder(Base):
         repeat_type_map = {
             "еженедельно": RepeatType.WEEKLY,
             "ежедневно": RepeatType.DAILY,
-            "одноразовое": RepeatType.SINGLE
+            "одноразовое": RepeatType.SINGLE,
+            "ежемесячно": RepeatType.MONTH
         }
         repeat_type = repeat_type_map.get(from_gpt.get("тип_повторения", "").lower(), RepeatType.SINGLE)
         reminder_time = datetime.strptime(from_gpt.get("время", "09:00"), "%H:%M").time()
