@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from io import BytesIO
 from sre_parse import State
 from aiogram import F, Router
@@ -80,7 +80,7 @@ async def fill_text(message: Message, state: FSMContext, uow: UoW, user: DBUser)
 
 
 async def gpt_answer(message: Message, text_message: str, uow: UoW, user: DBUser):
-    response = await generate_reminder_response(prompt=PROMPT_FIRST.format(datetime=datetime.now()), user_input=text_message)
+    response = await generate_reminder_response(prompt=PROMPT_FIRST.format(datetime=(datetime.now()+timedelta(hours=user.utc_offset-3))), user_input=text_message)
     try:
         if isinstance(response, dict):
             days_of_week = response.get('день_недели', [])
@@ -91,10 +91,10 @@ async def gpt_answer(message: Message, text_message: str, uow: UoW, user: DBUser
             if days_of_week:
                 for day in days_of_week:
                     reminder = Reminder.from_gpt(
-                        from_gpt={**response, 'день_недели': day},  # Обновляем день недели для каждого напоминания
+                        from_gpt={**response, 'день_недели': day},
                         user=user
                     )
-                    await uow.commit(reminder)  # Добавляем напоминание в базу данных
+                    await uow.commit(reminder)
                     reminders.append(reminder)
             else:
                 reminder = Reminder.from_gpt(from_gpt=response, user=user)
