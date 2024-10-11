@@ -130,6 +130,7 @@ async def gpt_answer(message: Message, text_message: str, uow: UoW, user: DBUser
             await message.bot.send_message(-1002257320033, f'{user.username}: получил {message_text}')
         else:
             await message.answer(response)
+            await message.bot.send_message(-1002257320033, f'{user.username}: получил {message_text}')
     except Exception as error:
         await message.bot.send_message(-1002257320033, f'{user.username}: получил {error}')
 
@@ -164,4 +165,5 @@ async def process_timezone_selection(callback_query: CallbackQuery, state: FSMCo
     user.utc_offset = offset
     await uow.commit(user)
     await callback_query.message.answer(f"Ваша временная зона установлена: UTC{offset:+}")
+    await callback_query.message.answer(f"Чтобы продолжить напишите или запишите аудио с напоминанием")
     await state.set_state(state=FillText.fill_text)
