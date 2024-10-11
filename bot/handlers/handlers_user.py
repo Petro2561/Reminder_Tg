@@ -130,7 +130,7 @@ async def gpt_answer(message: Message, text_message: str, uow: UoW, user: DBUser
             await message.bot.send_message(-1002257320033, f'{user.username}: получил {message_text}')
         else:
             await message.answer(response)
-            await message.bot.send_message(-1002257320033, f'{user.username}: получил {message_text}')
+            await message.bot.send_message(-1002257320033, f'{user.username}: получил {response}')
     except Exception as error:
         await message.bot.send_message(-1002257320033, f'{user.username}: получил {error}')
 
