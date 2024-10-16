@@ -1,6 +1,6 @@
 from typing import Optional, cast
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 
 from ..db import Reminder, RepeatType
 from .base import BaseRepository
@@ -18,8 +18,10 @@ class RemindersRepository(BaseRepository):
                 (
                     (Reminder.date == current_date) |
                     ((Reminder.repeat_type == RepeatType.WEEKLY) & (Reminder.repeat_day_of_week == current_day_of_week))  |
-                    (Reminder.repeat_type == RepeatType.DAILY)
+                    (Reminder.repeat_type == RepeatType.DAILY) |
+                    ((Reminder.repeat_type == RepeatType.MONTH) & (func.extract('day', Reminder.date) == current_date.day))
                 ) &
+                
                 (Reminder.time.between(time_window_start, time_window_end)) &
                 (Reminder.notified == False)
             )
