@@ -60,7 +60,7 @@ async def start_command(message: Message, state: FSMContext, command: CommandObj
     await message.answer(START_MESSAGE.format(name=user.first_name), parse_mode="HTML")
     await state.set_state(state=FillText.fill_text)
     if command.args == "hh":
-        await message.answer("По видимому вы работодатель. Надеюсь я помогу моему создателю получить вашу вакансию 😀")
+        await message.answer("По-видимому, вы работодатель. Надеюсь, я помогу моему создателю найти работу 😀")
 
 
 @router.message(StateFilter(FillText.fill_text), F.content_type == ContentType.VOICE)
