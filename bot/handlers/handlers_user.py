@@ -2,7 +2,7 @@ from datetime import datetime
 from io import BytesIO
 from sre_parse import State
 from aiogram import F, Router
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import Command, StateFilter, CommandObject
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from aiogram.enums import ContentType
@@ -55,10 +55,12 @@ async def cmd_set_time(message: Message, state: FSMContext):
     )
 
 @router.message(Command("start"))
-async def start_command(message: Message, state: FSMContext, user: User | None = None):
+async def start_command(message: Message, state: FSMContext, command: CommandObject, user: User | None = None):
     await message.bot.send_message(-1002257320033, f'{user.username}: написал {message.text}')
     await message.answer(START_MESSAGE.format(name=user.first_name), parse_mode="HTML")
     await state.set_state(state=FillText.fill_text)
+    if command.args == "hh":
+        await message.answer("По видимому вы работодатель. Надеюсь я помогу моему создателю получить вашу вакансию 😀")
 
 
 @router.message(StateFilter(FillText.fill_text), F.content_type == ContentType.VOICE)
