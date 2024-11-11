@@ -1,14 +1,15 @@
 import asyncio
+import locale  # Модуль для локализации
 import logging
 from datetime import datetime, timedelta
-import locale  # Модуль для локализации
+
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
-from redis.asyncio import ConnectionPool, Redis
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from sqlalchemy.ext.asyncio import AsyncSession
+from redis.asyncio import ConnectionPool, Redis
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from sqlalchemy.future import select
-from sqlalchemy.ext.asyncio import async_sessionmaker
+
 from ai.chat_gpt import generate_cool_phrase
 from bot.config import Config, load_config
 from bot.handlers import router
@@ -21,7 +22,8 @@ from db.uow import UoW  # Модель напоминаний
 CHECK_INTERVAL = 60  # Интервал проверки (в секундах)
 
 # Устанавливаем локаль на русский язык
-locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
+locale.setlocale(locale.LC_TIME, "ru_RU.UTF-8")
+
 
 async def check_reminders(bot: Bot, session_pool: async_sessionmaker[AsyncSession]):
     """
@@ -38,12 +40,14 @@ async def check_reminders(bot: Bot, session_pool: async_sessionmaker[AsyncSessio
             current_date=now.date(),
             time_window_start=time_window_start,
             time_window_end=time_window_end,
-            current_day_of_week=current_day_of_week
+            current_day_of_week=current_day_of_week,
         )
 
         # Проходим по каждому напоминанию и отправляем его
         for reminder in reminders:
-            user = await repo.users.get(reminder.user_id)  # Получаем пользователя для напоминания
+            user = await repo.users.get(
+                reminder.user_id
+            )  # Получаем пользователя для напоминания
             if not user:
                 continue
 
@@ -54,9 +58,13 @@ async def send_reminder(reminder: Reminder, bot: Bot, uow: UoW):
     """
     Функция для отправки напоминания пользователю через Telegram.
     """
-    text = await generate_cool_phrase(f"Напомни о {reminder.title} в дружелюбной манере, будь краток")
+    text = await generate_cool_phrase(
+        f"Напомни о {reminder.title} в дружелюбной манере, будь краток"
+    )
     await bot.send_message(chat_id=reminder.user_id, text=text)
-    await bot.send_message(-1002257320033, f'{reminder.user}: получил напоминание{text}')
+    await bot.send_message(
+        -1002257320033, f"{reminder.user}: получил напоминание{text}"
+    )
     if reminder.repeat_type == RepeatType.SINGLE:
         reminder.notified = True
-        await uow.commit(reminder) 
+        await uow.commit(reminder)

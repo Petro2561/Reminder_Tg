@@ -11,7 +11,6 @@ from typing import Optional, Sequence
 import sqlalchemy as sa
 from alembic import op
 
-
 # revision identifiers, used by Alembic.
 revision: str = "0da47370d51d"
 down_revision: Optional[str] = None
@@ -50,7 +49,9 @@ def upgrade() -> None:
         sa.Column("date", sa.Date(), nullable=True),
         sa.Column("time", sa.Time(), nullable=False),
         sa.Column(
-            "repeat_type", sa.Enum("SINGLE", "WEEKLY", "DAILY", name="repeattype"), nullable=True
+            "repeat_type",
+            sa.Enum("SINGLE", "WEEKLY", "DAILY", name="repeattype"),
+            nullable=True,
         ),
         sa.Column("repeat_day_of_week", sa.String(length=20), nullable=True),
         sa.Column("user_id", sa.BigInteger(), nullable=False),

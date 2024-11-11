@@ -20,5 +20,3 @@ class Repository(BaseRepository):
         super().__init__(session=session)
         self.users = UsersRepository(session=session)
         self.reminders = RemindersRepository(session=session)
-
-

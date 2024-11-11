@@ -11,7 +11,6 @@ from typing import Optional, Sequence
 import sqlalchemy as sa
 from alembic import op
 
-
 # revision identifiers, used by Alembic.
 revision: str = "02e1168c6da3"
 down_revision: Optional[str] = "0da47370d51d"

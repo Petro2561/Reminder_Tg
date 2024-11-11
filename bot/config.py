@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from environs import Env
 
+
 @dataclass
 class TgBot:
     token: str
@@ -21,6 +22,7 @@ class Postgres:
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
         )
 
+
 @dataclass
 class Redis:
     redis_host: str
@@ -28,15 +30,18 @@ class Redis:
     redis_db: int
     redis_data: str
 
+
 @dataclass
 class AdminConfig:
     admin_login: str
     admin_password: str
     secret_key: str
 
+
 @dataclass
 class OpenAI:
     api_token: str
+
 
 @dataclass
 class Config:
@@ -45,7 +50,6 @@ class Config:
     redis_db: Redis
     admin_config: AdminConfig
     open_ai: OpenAI
-
 
 
 def load_config(path: str | None = None) -> Config:
@@ -58,19 +62,18 @@ def load_config(path: str | None = None) -> Config:
             postgres_db=env("POSTGRES_DB"),
             postgres_password=env("POSTGRES_PASSWORD"),
             postgres_port=env.int("POSTGRES_PORT"),
-            postgres_user=env("POSTGRES_USER")
+            postgres_user=env("POSTGRES_USER"),
         ),
         redis_db=Redis(
             redis_host=env("REDIS_HOST"),
             redis_port=env("REDIS_PORT"),
             redis_db=env("REDIS_DB"),
-            redis_data=env("REDIS_DATA")
+            redis_data=env("REDIS_DATA"),
         ),
         admin_config=AdminConfig(
-        admin_login=env("ADMIN_LOGIN"),
-        admin_password=env("ADMIN_PASSWORD"),
-        secret_key=env("SECRET_KEY"),
+            admin_login=env("ADMIN_LOGIN"),
+            admin_password=env("ADMIN_PASSWORD"),
+            secret_key=env("SECRET_KEY"),
         ),
-        open_ai=OpenAI(api_token=env("OPENAI_API"))
+        open_ai=OpenAI(api_token=env("OPENAI_API")),
     )
-

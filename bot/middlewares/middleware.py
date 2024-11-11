@@ -1,10 +1,10 @@
 from typing import Any, Awaitable, Callable, Dict, Optional
 
 from aiogram import BaseMiddleware
-from aiogram.types import TelegramObject, Message, User, Chat
+from aiogram.types import Chat, Message, TelegramObject, User
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from db import SQLSessionContext, Repository, UoW
+from db import Repository, SQLSessionContext, UoW
 from db.db import DBUser
 
 
@@ -22,7 +22,10 @@ class DBSessionMiddleware(BaseMiddleware):
         event: TelegramObject,
         data: dict[str, Any],
     ) -> Any:
-        async with SQLSessionContext(session_pool=self.session_pool) as (repository, uow):
+        async with SQLSessionContext(session_pool=self.session_pool) as (
+            repository,
+            uow,
+        ):
             data["repository"] = repository
             data["uow"] = uow
             return await handler(event, data)

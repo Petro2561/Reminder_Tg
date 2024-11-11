@@ -7,8 +7,8 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
 from bot.config import load_config
-from db import Base
 from bot.utils.loggers import setup_logger
+from db import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -32,7 +32,9 @@ target_metadata: MetaData = Base.metadata
 
 
 def _get_postgres_dsn() -> str:
-    _config = load_config().postgres_db  # Используем Postgres конфигурацию из load_config
+    _config = (
+        load_config().postgres_db
+    )  # Используем Postgres конфигурацию из load_config
     return _config.get_connection_url()
 
 

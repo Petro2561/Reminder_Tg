@@ -3,9 +3,8 @@ import logging
 
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
-from redis.asyncio import ConnectionPool, Redis
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-
+from redis.asyncio import ConnectionPool, Redis
 
 from bot.config import Config, load_config
 from bot.handlers import router
@@ -36,7 +35,9 @@ async def main():
     dp.update.outer_middleware(DBSessionMiddleware(session_pool))
     dp.update.outer_middleware(CheckUserMiddleware())
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(check_reminders, 'interval', seconds=CHECK_INTERVAL, args=[bot, session_pool])
+    scheduler.add_job(
+        check_reminders, "interval", seconds=CHECK_INTERVAL, args=[bot, session_pool]
+    )
     scheduler.start()
     dp.include_router(router)
     await bot.delete_webhook(drop_pending_updates=True)

@@ -19,6 +19,7 @@ def bot() -> MockedBot:
     bot.session = MockedSession()
     return bot
 
+
 REMINDERS = [
     "Каждый понедельник, четверг в 11.30 шахматы",
     "Завтра в 3 футбол",

@@ -1,6 +1,7 @@
 import asyncio
-from io import BufferedReader, BytesIO
 import json
+from io import BufferedReader, BytesIO
+
 from openai import AsyncOpenAI
 
 from bot.config import load_config
@@ -71,7 +72,7 @@ PROMPT_FIRST = """
   "тип_повторения": "еженедельно",
   "день_недели": "понедельник",
   "время": "15:00",
-  "событие": "делать отчет"
+  "событие": "делать отчет"ГГГГ-ММ-ДД 
 
 Пример 7:
 
@@ -106,7 +107,7 @@ PROMPT_FIRST = """
 
 3) Ты должен возвращать точные данные для любых вариаций фраз, включающих напоминания. Формат данных, который ты должен вернуть, это:
 
-4) дата: дата события в формате ГГГГ-ММ-ДД (для одноразовых напоминаний). Никогда не отправляй дату в другом формате.
+4) дата: дата события в формате (для одноразовых напоминаний). Никогда не отправляй дату в другом формате.
 5) время: точное время события в формате ЧЧ:ММ.
 событие: описание того, что нужно сделать.
 тип_повторения: указывать "еженедельно", если напоминание повторяется.
@@ -120,17 +121,19 @@ PROMPT_FIRST = """
 10) "По будням" означает дни с понедельника по пятницу (рабочие дни).
 11) При запросе "каждый месяц" возвращай ближайшую подходящую дату с указанным числом. Если время напоминания ещё не прошло сегодня, установи напоминание на текущую дату. Если время уже прошло, установи напоминание на следующий месяц.
 """
+
+
 async def generate_reminder_response(user_input, prompt):
     full_prompt = prompt.format(user_input=user_input)
-    
+
     response = await client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": full_prompt},
-            {"role": "user", "content": user_input}
+            {"role": "user", "content": user_input},
         ],
         temperature=0.5,
-        max_tokens=150
+        max_tokens=150,
     )
     content = response.choices[0].message.content
     try:
@@ -139,24 +142,22 @@ async def generate_reminder_response(user_input, prompt):
     except json.JSONDecodeError:
         return content
 
+
 async def manage_audio(file_bytes: BytesIO):
     audio_file = BufferedReader(file_bytes)
     filename = "audio.ogg"  # Или другой поддерживаемый формат, в зависимости от того, что прислал Telegram (например, .ogg для голосовых сообщений)
     transcription = await client.audio.transcriptions.create(
-        model="whisper-1", 
-        file=(filename, audio_file),
-        response_format="text"
+        model="whisper-1", file=(filename, audio_file), response_format="text"
     )
     return transcription
 
-async def generate_cool_phrase(user_input):    
+
+async def generate_cool_phrase(user_input):
     response = await client.chat.completions.create(
         model="gpt-3.5-turbo",
-        messages=[
-            {"role": "user", "content": user_input}
-        ],
+        messages=[{"role": "user", "content": user_input}],
         temperature=0.5,
-        max_tokens=150
+        max_tokens=150,
     )
     content = response.choices[0].message.content
     return content
