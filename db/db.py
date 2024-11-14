@@ -118,8 +118,7 @@ class Reminder(Base):
         ).time()
         reminder_datetime = datetime.combine(date, reminder_time) if date else None
         if reminder_datetime:
-            reminder_datetime = reminder_datetime - timedelta(hours=3)
-            reminder_datetime += timedelta(hours=user.utc_offset)
+            reminder_datetime = reminder_datetime + (timedelta(hours=(3 - user.utc_offset)))
 
         return cls(
             title=from_gpt.get("событие", ""),

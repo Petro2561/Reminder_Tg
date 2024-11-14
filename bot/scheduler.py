@@ -30,7 +30,7 @@ async def check_reminders(bot: Bot, session_pool: async_sessionmaker[AsyncSessio
     Функция для проверки напоминаний и отправки сообщений пользователям через Telegram.
     """
     now = datetime.now()
-    current_day_of_week = now.strftime("%A").lower()
+    current_day_of_week = now.strftime("%A")
     async with SQLSessionContext(session_pool) as (repo, uow):
         time_window_start = (now - timedelta(seconds=30)).time()
         time_window_end = (now + timedelta(seconds=30)).time()
